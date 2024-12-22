@@ -12,22 +12,15 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixpkgs-torchvision.url = "github:nixos/nixpkgs/5083ec887760adfe12af64830a66807423a859a7";
   };
 
   outputs = {
     self,
     nixpkgs,
-    nixpkgs-torchvision,
     ...
   }: let
     system = "x86_64-linux";
     pkgs = import nixpkgs {
-      inherit system;
-      config.allowUnfree = true;
-      config.cudaSupport = true;
-    };
-    pkgs-torchvision = import nixpkgs-torchvision {
       inherit system;
       config.allowUnfree = true;
       config.cudaSupport = true;
@@ -66,11 +59,16 @@
           setuptools-scm # wtf is this
         ];
         propagatedBuildInputs = with pkgs.python3Packages; [
-          # torchWithCuda
-          # pkgs-torchvision.python3Packages.torchvision
-          # pytorch-lightning
+          torchWithCuda
+          torchvision
+          pytorch-lightning
+          scikit-image
+          h5py
+          torchmetrics
+          pandas
           self.outputs.packages."${system}".runstats
         ];
+
         pythonImportsCheck = ["fastmri"];
       };
       default = self.packages."${system}".fastmri;
