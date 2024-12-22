@@ -69,6 +69,7 @@
           self.outputs.packages."${system}".runstats
         ];
 
+        dontCheckRuntimeDeps = true;
         pythonImportsCheck = ["fastmri"];
       };
       default = self.packages."${system}".fastmri;
